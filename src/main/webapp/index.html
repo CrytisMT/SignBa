@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>签到平台登录</title>
+    <link href="lib/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div>
+    <h1>签到平台登录</h1>
+</div>
+<div>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input id="username" name="username" type="text">
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input id="password" name="password" type="password">
+        </div>
+        <div class="form-group">
+            <input id="loginBtn" type="button" value="登录">
+        </div>
+    </form>
+</div>
+</body>
+<script src="lib/js/jquery-2.2.1.min.js"></script>
+<script src="lib/js/bootstrap.min.js"></script>
+<script>
+    $("#loginBtn").on("click", function () {
+        $.post("/login", $("#loginForm").serialize(), function (data) {
+            if (data.ret) {
+                alert("登录成功~");
+                window.location.href = "/list.html";
+            }else {
+                alert(data.errMsg);
+            }
+        }, "json");
+    });
+</script>
+</html>
