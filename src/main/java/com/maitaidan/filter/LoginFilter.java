@@ -23,7 +23,6 @@ public class LoginFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String requestURI = httpServletRequest.getRequestURI();
         logger.info("请求的url:",requestURI);
-        httpServletRequest.get
         chain.doFilter(request,response);
     }
 
