@@ -2,6 +2,7 @@ package com.maitaidan.controller;
 
 import com.maitaidan.model.GeneralJSONResult;
 import com.maitaidan.util.ConfigUtil;
+import com.maitaidan.util.LoginUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * Created by Crytis on 2016/3/13.
@@ -30,10 +32,7 @@ public class LoginController {
         }
 
         if (password.equals(ConfigUtil.getPassword(username))) {
-            Cookie cookie = new Cookie("singpf", "test");
-            cookie.setMaxAge(60000);
-            response.addCookie(cookie);
-
+            Cookie cookie = new Cookie(username, LoginUtil.generateCookie(username + new Date().toString()));
             return new GeneralJSONResult<String>(true, "", "登录成功！");
         }
         return new GeneralJSONResult<String>(false, "用户名密码错误!", "登录失败！");
