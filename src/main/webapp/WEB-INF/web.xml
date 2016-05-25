@@ -8,8 +8,15 @@
     <filter>
         <filter-name>loginFilter</filter-name>
         <filter-class>com.maitaidan.filter.LoginFilter</filter-class>
+        <init-param>
+            <param-name>excluds</param-name>
+            <param-value>*.js,*.css,/index.html,/noauth.html,/login</param-value>
+        </init-param>
     </filter>
 
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
     <filter-mapping>
         <filter-name>loginFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -17,9 +24,17 @@
     <servlet>
         <servlet-name>dispatch</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:dispatch-servlet.xml</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!--<context-param>-->
+        <!--<param-name>contextConfigLocation</param-name>-->
+        <!--<param-value>classpath:dispatch-servlet.xml</param-value>-->
+    <!--</context-param>-->
     <servlet-mapping>
         <servlet-name>dispatch</servlet-name>
         <url-pattern>/</url-pattern>

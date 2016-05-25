@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+
+    <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
+    <context:component-scan base-package="com.maitaidan"/>
+
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="20"/>
+        <property name="initialSize" value="5"/>
+        <property name="maxWait" value="60000"/>
+        <!--设置慢查询sql的阀值 单位是毫秒-->
+        <property name="connectionProperties" value="druid.stat.slowSqlMillis=200"/>
+        <property name="poolPreparedStatements" value="false"/>
+        <property name="removeAbandoned" value="false"/>
+    </bean>
+
+    <bean id="loginSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource"/>
+        <property name="mapperLocations" value="classpath:mybatis/*.xml"/>
+    </bean>
+
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="loginSqlSessionFactory"/>
+        <property name="basePackage" value="com.maitaidan.dao"/>
+    </bean>
+
+    <context:property-placeholder location="classpath:configure.properties" ignore-unresolvable="false"/>
+
+    <!-- 异步线程池 -->
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 核心线程数 -->
+        <property name="corePoolSize" value="20"/>
+        <!-- 最大线程数 -->
+        <property name="maxPoolSize" value="20"/>
+        <!-- 队列最大长度 >=mainExecutor.maxSize -->
+        <property name="queueCapacity" value="1000"/>
+        <!-- 线程池维护线程所允许的空闲时间 -->
+        <property name="keepAliveSeconds" value="300"/>
+        <!-- 线程池对拒绝任务(无线程可用)的处理策略 -->
+        <property name="rejectedExecutionHandler">
+            <bean class="com.maitaidan.service.threadpool.ThreadpoolRejectedHandler"/>
+        </property>
+    </bean>
+
+    <task:scheduler id="taskScheduler" pool-size="10"/>
+    <task:annotation-driven scheduler="taskScheduler"/>
+    <import resource="application-aop.xml"/>
+</beans>

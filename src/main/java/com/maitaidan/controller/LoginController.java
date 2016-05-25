@@ -1,6 +1,6 @@
 package com.maitaidan.controller;
 
-import com.maitaidan.pojo.GeneralJSONResult;
+import com.maitaidan.model.GeneralJSONResult;
 import com.maitaidan.util.ConfigUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+
     @ResponseBody
     @RequestMapping("login")
     public GeneralJSONResult<String> login(String username, String password, HttpServletResponse response) {
@@ -28,8 +30,10 @@ public class LoginController {
         }
 
         if (password.equals(ConfigUtil.getPassword(username))) {
+            Cookie cookie = new Cookie("singpf", "test");
+            cookie.setMaxAge(60000);
+            response.addCookie(cookie);
 
-            response.addHeader("Set-Cookie","qn1=sdfsdfsdfsdfsfsfsf");
             return new GeneralJSONResult<String>(true, "", "登录成功！");
         }
         return new GeneralJSONResult<String>(false, "用户名密码错误!", "登录失败！");

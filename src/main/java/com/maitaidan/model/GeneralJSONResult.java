@@ -1,4 +1,4 @@
-package com.maitaidan.pojo;
+package com.maitaidan.model;
 
 /**
  * Created by Crytis on 2016/3/13.
